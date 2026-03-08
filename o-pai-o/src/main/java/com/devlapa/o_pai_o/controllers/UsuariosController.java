@@ -1,10 +1,9 @@
 package com.devlapa.o_pai_o.controllers;
 
-import com.devlapa.o_pai_o.models.Usuarios;
-import com.devlapa.o_pai_o.repository.UsuarioRepository;
+import com.devlapa.o_pai_o.domain.usuarios.Usuarios;
+import com.devlapa.o_pai_o.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 

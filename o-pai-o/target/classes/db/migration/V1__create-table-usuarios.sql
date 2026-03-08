@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS usuarios (
-                                        id SERIAL PRIMARY KEY,
-                                        nome VARCHAR(100) NOT NULL,
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
     login VARCHAR(100) NOT NULL,
     hash TEXT NOT NULL,
     data_cadastro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

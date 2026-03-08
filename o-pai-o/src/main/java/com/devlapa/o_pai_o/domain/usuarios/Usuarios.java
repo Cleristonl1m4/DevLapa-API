@@ -1,11 +1,15 @@
-package com.devlapa.o_pai_o.models;
+package com.devlapa.o_pai_o.domain.usuarios;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "usuarios")
+@Getter
+@Setter
 public class Usuarios {
 
     @Id
