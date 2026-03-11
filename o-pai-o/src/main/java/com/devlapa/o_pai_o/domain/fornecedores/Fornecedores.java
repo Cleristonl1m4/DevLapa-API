@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -39,7 +39,9 @@ public class Fornecedores {
 
     @PrePersist
     public void PrePersist(){
-        ativo = true;
-        data_cadrastro = LocalDateTime.now();
+        this.ativo = true;
+        this.data_cadrastro = LocalDateTime.now();
     }
+
+
 }
