@@ -10,9 +10,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.lang.reflect.Field;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -56,4 +56,9 @@ public class FornecedoresServices {
             return fornecedores.save(newFornecedores);
         }
 
+    public void deleteFornecedor(@RequestParam   UUID id) {
+        Fornecedores fornecedor = fornecedores.findById(id)
+                .orElseThrow(()-> new RuntimeException("Fornecedor não encontrado"));
+        fornecedores.delete(fornecedor);
     }
+}

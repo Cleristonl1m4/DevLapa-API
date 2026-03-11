@@ -34,6 +34,11 @@ public class FornecedoresController {
     public Fornecedores updateFornecedor(@PathVariable UUID id,@RequestBody Map<String,Object>fields){
         return fornecedoresServices.updateFornecedoresFields(id,fields);
     }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteFornecedor(@PathVariable UUID id){
+        fornecedoresServices.deleteFornecedor(id);
+        return ResponseEntity.ok("Usuario deletado com sucesso");
+    }
 
 
 }
