@@ -1,7 +1,7 @@
-CREATE TABLE fornecedores(
-    id UUID DEFAULT gen_random_uui() PRIMARY KEY,
+CREATE  TABLE fornecedores(
+    id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    cpf VARCHAR(100),
+    cnpj VARCHAR(100),
     telefone VARCHAR(100) NOT NULL,
     email VARCHAR(200),
     endereco VARCHAR(255),
