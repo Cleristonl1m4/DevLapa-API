@@ -20,10 +20,12 @@ public class FornecedoresServices {
 
     @Autowired
     FornecedoresRepository fornecedores;
+    @Autowired
+    GeradordeIdServices geradordeIdServices;
 
     public Fornecedores createFornecedores(FornecedoresRequestDTO data){
         Fornecedores newFornecedores = new Fornecedores();
-
+        newFornecedores.setId(geradordeIdServices.geradorDeId(fornecedores));
         newFornecedores.setNome(data.nome());
         newFornecedores.setCnpj(data.cnpj());
         newFornecedores.setTelefone(data.telefone());
@@ -39,12 +41,12 @@ public class FornecedoresServices {
     public List<FornecedoresResponseDTO> getFornecedores(int page, int size) {
         Pageable pageable = PageRequest.of(page,size);
         Page<Fornecedores> fornecedoresPage = this.fornecedores.findAll(pageable);
-        return fornecedoresPage.map(event -> new FornecedoresResponseDTO(event.getId(), event.getNome(),
+        return fornecedoresPage.map(event -> new FornecedoresResponseDTO((long) Math.toIntExact(event.getId()), event.getNome(),
                 event.getCnpj(),event.getTelefone(), event.getEmail(), event.getEndereco(), event.isAtivo(),
-                event.getData_cadrastro()))
+                event.getData_cadastro()))
                 .stream().toList();
     }
-    public Fornecedores updateFornecedoresFields(UUID id, Map<String, Object> fields) {
+    public Fornecedores updateFornecedoresFields(Long id, Map<String, Object> fields) {
        Fornecedores newFornecedores = fornecedores.findById(id)
                .orElseThrow(() -> new RuntimeException("Fornecedor não encontrado"));
 
@@ -56,7 +58,7 @@ public class FornecedoresServices {
             return fornecedores.save(newFornecedores);
         }
 
-    public void deleteFornecedor(@RequestParam   UUID id) {
+    public void deleteFornecedor(@RequestParam Long id) {
         Fornecedores fornecedor = fornecedores.findById(id)
                 .orElseThrow(()-> new RuntimeException("Fornecedor não encontrado"));
         fornecedores.delete(fornecedor);

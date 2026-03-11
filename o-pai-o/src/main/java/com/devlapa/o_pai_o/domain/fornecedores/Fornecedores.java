@@ -18,8 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Fornecedores {
     @Id
-    @GeneratedValue
-    private UUID id;
+    private Long id;
 
     @Column(nullable = false)
     private String nome;
@@ -35,12 +34,12 @@ public class Fornecedores {
 
     private boolean ativo;
 
-    private LocalDateTime data_cadrastro;
+    private LocalDateTime data_cadastro;
 
     @PrePersist
     public void PrePersist(){
         this.ativo = true;
-        this.data_cadrastro = LocalDateTime.now();
+        this.data_cadastro = LocalDateTime.now();
     }
 
 

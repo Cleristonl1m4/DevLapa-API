@@ -31,11 +31,11 @@ public class FornecedoresController {
         return ResponseEntity.ok(allFornecedores);
     }
     @PatchMapping("/{id}")
-    public Fornecedores updateFornecedor(@PathVariable UUID id,@RequestBody Map<String,Object>fields){
+    public Fornecedores updateFornecedor(@PathVariable Long id,@RequestBody Map<String,Object>fields){
         return fornecedoresServices.updateFornecedoresFields(id,fields);
     }
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteFornecedor(@PathVariable UUID id){
+    public ResponseEntity<String> deleteFornecedor(@PathVariable Long id){
         fornecedoresServices.deleteFornecedor(id);
         return ResponseEntity.ok("Usuario deletado com sucesso");
     }
