@@ -1,9 +1,7 @@
 package com.devlapa.o_pai_o.domain.fornecedores;
 
-import java.util.UUID;
-
 public record FornecedoresResponseDTO (
-        UUID id,
+        Long id,
         String nome,
         String cnpj,
         String telefone,
