@@ -1,4 +1,13 @@
 package com.devlapa.o_pai_o.domain.produtos;
 
-public record ProdutosRequestDTO() {
-}
+import java.math.BigDecimal;
+import java.util.UUID;
+
+public record ProdutosRequestDTO(
+    String nome,
+    BigDecimal preco,
+    String unidade,
+    UUID categoriaId
+) { }
+
+
