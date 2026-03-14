@@ -54,4 +54,10 @@ public class CategoriaServices {
             });
             return categorias.save(findCategoria);
     }
+
+    public void deleteCategoria(Long id) {
+        Categorias categoria = categorias.findById(id)
+                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+        categorias.delete(categoria);
+    }
 }

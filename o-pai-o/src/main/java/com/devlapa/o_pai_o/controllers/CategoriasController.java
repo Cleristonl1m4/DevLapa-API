@@ -36,4 +36,10 @@ public class CategoriasController {
         return categoriaService.updateCategoriaFinds(id,fields);
     }
 
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteCategoria(@PathVariable Long id){
+        categoriaService.deleteCategoria(id);
+        return ResponseEntity.ok("Categoria deletada com sucesso");
+    }
+
 }
