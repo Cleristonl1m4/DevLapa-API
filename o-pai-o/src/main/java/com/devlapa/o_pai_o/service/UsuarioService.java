@@ -33,6 +33,11 @@ public class UsuarioService {
     }
 
     public UsuariosResponseDTO salvar(UsuariosRequestDTO dto) {
+
+        if (usuarioRepository.existsByLogin(dto.login())){
+            throw new RuntimeException("Login já está em uso");
+        }
+
         Usuarios usuario = new Usuarios();
         usuario.setNome(dto.nome());
         usuario.setLogin(dto.login());
@@ -42,6 +47,8 @@ public class UsuarioService {
                 salvo.getId(), salvo.getNome(), salvo.getLogin(),
                 salvo.getPerfil(), salvo.getAtivo(), salvo.getDataCadastro()
         );
+
+
     }
 
     public UsuariosResponseDTO atualizar(Long id, UsuariosRequestDTO dto) {
@@ -49,7 +56,7 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
         usuario.setNome(dto.nome());
         usuario.setLogin(dto.login());
-        usuario.setHash(dto.senha());
+        usuario.setHash(passwordEncoder.encode(dto.senha()));
         usuario.setDataModificacao(LocalDateTime.now());
         Usuarios atualizado = usuarioRepository.save(usuario);
         return new UsuariosResponseDTO(
