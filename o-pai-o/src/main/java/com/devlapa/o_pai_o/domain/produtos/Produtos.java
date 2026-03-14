@@ -33,14 +33,16 @@ public class Produtos {
     private Categorias categoria;
 
     @Column(nullable = false)
-    private boolean ativo;
+    private Boolean ativo;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime datacriacao;
 
-    @prePersist
-    public void prePersist(){
+    @PrePersist
+    public void PrePersist(){
         this.datacriacao = LocalDateTime.now();
-        if (this.ativo == null) this.ativo = true;
+        if (this.ativo == null) {
+            this.ativo = true;
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.devlapa.o_pai_o.domain.usuarios.Usuarios;
 import com.devlapa.o_pai_o.domain.usuarios.UsuariosRequestDTO;
 import com.devlapa.o_pai_o.domain.usuarios.UsuariosResponseDTO;
 import com.devlapa.o_pai_o.repositories.UsuarioRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,9 +14,12 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository,
+                          PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<UsuariosResponseDTO> listarTodos() {
@@ -32,7 +36,7 @@ public class UsuarioService {
         Usuarios usuario = new Usuarios();
         usuario.setNome(dto.nome());
         usuario.setLogin(dto.login());
-        usuario.setHash(dto.senha());
+        usuario.setHash(passwordEncoder.encode(dto.senha()));
         Usuarios salvo = usuarioRepository.save(usuario);
         return new UsuariosResponseDTO(
                 salvo.getId(), salvo.getNome(), salvo.getLogin(),

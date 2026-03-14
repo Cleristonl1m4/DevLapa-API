@@ -12,4 +12,4 @@ public record ProdutosResponseDTO(
         String categoria,
         Boolean ativo,
         LocalDateTime datacricao
-) { }
+) {}
