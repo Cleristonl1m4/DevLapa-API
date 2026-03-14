@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -18,8 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Fornecedores {
     @Id
-    @GeneratedValue
-    private UUID id;
+    private Long id;
 
     @Column(nullable = false)
     private String nome;
@@ -35,11 +34,13 @@ public class Fornecedores {
 
     private boolean ativo;
 
-    private LocalDateTime data_cadrastro;
+    private LocalDateTime data_cadastro;
 
     @PrePersist
     public void PrePersist(){
-        ativo = true;
-        data_cadrastro = LocalDateTime.now();
+        this.ativo = true;
+        this.data_cadastro = LocalDateTime.now();
     }
+
+
 }
