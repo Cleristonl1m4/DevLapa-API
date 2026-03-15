@@ -3,14 +3,18 @@ package com.devlapa.o_pai_o.domain.usuarios;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "usuarios")
 @Getter
 @Setter
-public class Usuarios {
+public class Usuarios implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,67 +50,41 @@ public class Usuarios {
     }
 
 
-    public Long getId() {
-        return id;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (this.perfil != null && this.perfil.equals("ADMIN")) {
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        }
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getHash() {
+    @Override
+    public String getPassword() {
         return hash;
     }
 
-    public void setHash(String hash) {
-        this.hash = hash;
+    @Override
+    public String getUsername() {
+        return login;
     }
 
-    public LocalDateTime getDataCadastro() {
-        return dataCadastro;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public void setDataCadastro(LocalDateTime dataCadastro) {
-        this.dataCadastro = dataCadastro;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
     }
 
-    public String getPerfil() {
-        return perfil;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
-    public void setPerfil(String perfil) {
-        this.perfil = perfil;
-    }
-
-    public LocalDateTime getDataModificacao() {
-        return dataModificacao;
-    }
-
-    public void setDataModificacao(LocalDateTime dataModificacao) {
-        this.dataModificacao = dataModificacao;
-    }
-
-    public Boolean getAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        this.ativo = ativo;
+    @Override
+    public boolean isEnabled() {
+        return ativo != null ? ativo : true;
     }
 }

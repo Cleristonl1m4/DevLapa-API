@@ -7,15 +7,14 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "categoria")
+@Table(name = "categorias")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Categorias {
     @Id
-    @GeneratedValue
-    private UUID id;
+    private Long id;
 
     @Column(nullable = false)
     private String nome;

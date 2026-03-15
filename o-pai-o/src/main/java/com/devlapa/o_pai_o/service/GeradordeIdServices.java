@@ -8,10 +8,10 @@ import java.util.Random;
 @Service
 public class GeradordeIdServices {
     private final Random random = new Random();
-        public Long geradorDeId(JpaRepository<?, Long> repository){
+        public <T> Long geradorDeId(JpaRepository<T, Long> repository){
             Long id;
             do{
-                id = (long)(1000 + random.nextInt(9000));
+                id = (long)(0000 + random.nextInt(9000));
             }while (repository.existsById(id));
             return  id;
         }
