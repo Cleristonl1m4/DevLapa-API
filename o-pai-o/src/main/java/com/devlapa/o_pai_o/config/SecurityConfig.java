@@ -15,7 +15,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecuritygit add .
+git commit -m "merge: resolvendo conflitos de seguranca e produtos"
 public class SecurityConfig {
 
     @Autowired
