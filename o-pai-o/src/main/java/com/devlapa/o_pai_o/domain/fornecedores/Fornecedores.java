@@ -1,5 +1,8 @@
 package com.devlapa.o_pai_o.domain.fornecedores;
 
+import com.devlapa.o_pai_o.domain.produtos.Produtos;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +11,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -42,5 +46,8 @@ public class Fornecedores {
         this.data_cadastro = LocalDateTime.now();
     }
 
+    @JsonIgnore
+    @ManyToMany(mappedBy = "fornecedor")
+    private List<Produtos> produtos;
 
 }
