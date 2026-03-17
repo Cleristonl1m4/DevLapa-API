@@ -59,4 +59,10 @@ public class ProdutoService {
                 .stream()
                 .toList();
     }
+
+    public void deleteProduto(Long id) {
+        Produtos produto = produtosRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Produto não encontrado"));
+        produtosRepository.delete(produto);
+    }
 }
