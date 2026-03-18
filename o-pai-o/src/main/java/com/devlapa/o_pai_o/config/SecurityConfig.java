@@ -15,8 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecuritygit add .
-git commit -m "merge: resolvendo conflitos de seguranca e produtos"
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -29,11 +28,13 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/usuarios").hasRole("ADMIN")
 
 
-                        .requestMatchers(HttpMethod.GET, "/api/categorias").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers(HttpMethod.POST, "/api/categorias").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/api/contas-pagar/**").hasAnyRole("GERENTE", "ADMIN")
+                        .requestMatchers("/api/produtos/**").hasAnyRole("GERENTE", "ADMIN")
+                        .requestMatchers("/api/fornecedor/**").hasAnyRole("GERENTE", "ADMIN")
 
                         .anyRequest().authenticated()
                 )

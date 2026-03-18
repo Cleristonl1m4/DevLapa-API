@@ -1,6 +1,6 @@
 package com.devlapa.o_pai_o.controllers;
 
-import com.devlapa.o_pai_o.domain.categorias.Categorias;
+
 import com.devlapa.o_pai_o.domain.produtos.Produtos;
 import com.devlapa.o_pai_o.domain.produtos.ProdutosRequestDTO;
 import com.devlapa.o_pai_o.service.ProdutoService;

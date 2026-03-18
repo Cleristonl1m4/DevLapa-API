@@ -52,10 +52,16 @@ public class Usuarios implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (this.perfil != null && this.perfil.equals("ADMIN")) {
-            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        if (this.perfil != null && this.perfil.equalsIgnoreCase("ADMIN")) {
+
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_GERENTE"));
         }
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+
+        if (this.perfil != null && this.perfil.equalsIgnoreCase("GERENTE")) {
+            return List.of(new SimpleGrantedAuthority("ROLE_GERENTE"));
+        }
+
+        return List.of(new SimpleGrantedAuthority("ROLE_VISUALIZADOR"));
     }
 
     @Override
