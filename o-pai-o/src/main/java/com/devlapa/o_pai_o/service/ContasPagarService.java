@@ -7,6 +7,7 @@ import com.devlapa.o_pai_o.repositories.FornecedoresRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class ContasPagarService {
@@ -17,10 +18,14 @@ public class ContasPagarService {
     @Autowired
     private FornecedoresRepository fornecedoresRepository;
 
+    public List<ContaPagar> listarTodas() {
+        return contasPagarRepository.findAll();
+    }
+
     @Transactional
     public ContaPagar cadastrar(DadosCadastroContaPagar dados) {
         var fornecedor = fornecedoresRepository.findById(dados.fornecedorId())
-                .orElseThrow(() -> new RuntimeException("Forncedor não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Fornecedor não encontrado"));
 
         var conta = new ContaPagar();
         conta.setFornecedor(fornecedor);
@@ -30,6 +35,5 @@ public class ContasPagarService {
         conta.setCategoria(dados.categoria());
 
         return contasPagarRepository.save(conta);
-
     }
 }

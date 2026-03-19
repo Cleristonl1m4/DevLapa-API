@@ -1,4 +1,5 @@
 package com.devlapa.o_pai_o.domain.usuarios;
 
-public record LoginResponseDTO(String token) {
-}
+// No Backend
+public record LoginResponseDTO(String token, String nome, String perfil) {}
+
