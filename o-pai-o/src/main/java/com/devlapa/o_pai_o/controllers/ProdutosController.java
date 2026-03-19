@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -46,5 +47,11 @@ public class ProdutosController {
         produtoService.deleteProduto(id);
         return ResponseEntity.ok("Produto deletado com sucesso");
     }
+
+    @PatchMapping("/update/{id}")
+    public Produtos updateProduto(@PathVariable Long id,@RequestBody Map<String,Object>fields){
+        return produtoService.updateProdutos(id,fields);
+    }
+
 
 }

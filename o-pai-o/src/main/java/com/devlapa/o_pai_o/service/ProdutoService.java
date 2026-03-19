@@ -8,14 +8,19 @@ import com.devlapa.o_pai_o.domain.produtos.ProdutosResponseDTO;
 import com.devlapa.o_pai_o.repositories.CategoriasRepository;
 import com.devlapa.o_pai_o.repositories.FornecedoresRepository;
 import com.devlapa.o_pai_o.repositories.ProdutosRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProdutoService {
@@ -64,5 +69,35 @@ public class ProdutoService {
         Produtos produto = produtosRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Produto não encontrado"));
         produtosRepository.delete(produto);
+    }
+
+    public Produtos updateProdutos(Long id, Map<String, Object> fields) {
+        Produtos newProduto = produtosRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Produto não encontrado."));
+
+            fields.forEach((key,value)->{
+                if(key.equals("categoria"))
+                {   Integer categoriaId = Integer.valueOf(value.toString());
+                    Categorias categoria = categoriasRepository.findById(Long.valueOf(categoriaId))
+                            .orElseThrow(()-> new RuntimeException("Categoria não encontrada."));
+                    newProduto.setCategoria(categoria);
+                    return;
+                }
+                if(key.equals("fornecedor"))
+                {
+                    Integer fornecedorId = Integer.valueOf(value.toString());
+                    Fornecedores fornecedor = fornecedoresRepository.findById(Long.valueOf(fornecedorId))
+                            .orElseThrow(() -> new RuntimeException("Fornecedor não encontrado."));
+                    newProduto.setFornecedor(fornecedor);
+                    return;
+                }
+                Field field = ReflectionUtils.findField(Produtos.class, key);
+                field.setAccessible(true);
+                if(field.getType().equals(BigDecimal.class) && value instanceof Number){
+                    value = BigDecimal.valueOf(((Number)value).doubleValue());
+                }
+                ReflectionUtils.setField(field, newProduto,value);
+            });
+            return produtosRepository.save(newProduto);
     }
 }
