@@ -23,26 +23,26 @@ public class ContasPagarController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN', 'GERENTE')")
     public ResponseEntity<ContaPagar> cadastrar(@RequestBody DadosCadastroContaPagar dados) {
         return ResponseEntity.ok(service.salvar(dados));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN', 'GERENTE')")
     public ResponseEntity<ContaPagar> editar(@PathVariable Long id, @RequestBody DadosCadastroContaPagar dados) {
         return ResponseEntity.ok(service.atualizar(id, dados));
     }
 
     @PatchMapping("/{id}/pagar")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN', 'GERENTE')")
     public ResponseEntity<Void> pagar(@PathVariable Long id) {
         service.marcarComoPaga(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN', 'GERENTE')")
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         service.deletar(id);
         return ResponseEntity.noContent().build();

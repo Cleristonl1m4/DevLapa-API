@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record DadosCadastroContaPagar(
+        Long usuarioId,
         Long fornecedorId,
         String descricao,
         BigDecimal valor,
