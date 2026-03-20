@@ -5,7 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.devlapa.o_pai_o.domain.usuarios.Usuarios;
-import org.springframework.beans.factory.annotation.Value; // IMPORT CORRETO
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -24,6 +24,8 @@ public class TokenService {
             return JWT.create()
                     .withIssuer("o-pai-o-api")
                     .withSubject(usuario.getLogin())
+
+                    .withClaim("role", usuario.getPerfil())
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
@@ -40,11 +42,11 @@ public class TokenService {
                     .verify(token)
                     .getSubject();
         } catch (JWTVerificationException exception){
-            return ""; // Retorna vazio se o token for inválido
+            return null;
         }
     }
 
     private Instant genExpirationDate(){
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().plusDays(30).toInstant(ZoneOffset.of("-03:00"));
     }
 }
