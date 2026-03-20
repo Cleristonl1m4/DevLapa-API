@@ -4,6 +4,7 @@ import com.devlapa.o_pai_o.domain.usuarios.UsuariosRequestDTO;
 import com.devlapa.o_pai_o.domain.usuarios.UsuariosResponseDTO;
 import com.devlapa.o_pai_o.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,6 +34,13 @@ public class UsuariosController {
             @PathVariable Long id,
             @RequestBody UsuariosRequestDTO dto) {
         return ResponseEntity.ok(usuarioService.atualizar(id, dto));
+    }
+
+    @PatchMapping("/{id}/tornar-admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public  ResponseEntity<Void> tornarAdmin(@PathVariable Long id){
+        usuarioService.mudarPerfil(id, "ADMIN");
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")

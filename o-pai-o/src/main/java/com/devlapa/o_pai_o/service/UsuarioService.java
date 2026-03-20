@@ -6,6 +6,7 @@ import com.devlapa.o_pai_o.domain.usuarios.UsuariosResponseDTO;
 import com.devlapa.o_pai_o.repositories.UsuarioRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,8 +17,7 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository,
-                          PasswordEncoder passwordEncoder) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -32,6 +32,7 @@ public class UsuarioService {
                 .toList();
     }
 
+    @Transactional
     public UsuariosResponseDTO salvar(UsuariosRequestDTO dto) {
         if (usuarioRepository.existsByLogin(dto.login())){
             throw new RuntimeException("Login já está em uso");
@@ -41,10 +42,9 @@ public class UsuarioService {
         usuario.setNome(dto.nome());
         usuario.setLogin(dto.login());
         usuario.setHash(passwordEncoder.encode(dto.senha()));
-
-
         usuario.setAtivo(true);
         usuario.setPerfil("USUARIO");
+        usuario.setDataCadastro(LocalDateTime.now());
 
         Usuarios salvo = usuarioRepository.save(usuario);
         return new UsuariosResponseDTO(
@@ -53,15 +53,18 @@ public class UsuarioService {
         );
     }
 
-
-
+    @Transactional
     public UsuariosResponseDTO atualizar(Long id, UsuariosRequestDTO dto) {
         Usuarios usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
         usuario.setNome(dto.nome());
         usuario.setLogin(dto.login());
-        usuario.setHash(passwordEncoder.encode(dto.senha()));
+        if (dto.senha() != null && !dto.senha().isBlank()) {
+            usuario.setHash(passwordEncoder.encode(dto.senha()));
+        }
         usuario.setDataModificacao(LocalDateTime.now());
+
         Usuarios atualizado = usuarioRepository.save(usuario);
         return new UsuariosResponseDTO(
                 atualizado.getId(), atualizado.getNome(), atualizado.getLogin(),
@@ -69,6 +72,16 @@ public class UsuarioService {
         );
     }
 
+    @Transactional
+    public void mudarPerfil(Long id, String novoPerfil) {
+        Usuarios usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        usuario.setPerfil(novoPerfil);
+        usuario.setDataModificacao(LocalDateTime.now());
+        usuarioRepository.save(usuario);
+    }
+
+    @Transactional
     public void inativar(Long id) {
         Usuarios usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));

@@ -1,60 +1,90 @@
-💰 API de Contas a Pagar
-Esta API gerencia as obrigações financeiras do bar "O Pai Ó", permitindo o controle de gastos por fornecedor e data de vencimento.
+# API - Gestão de Contas a Pagar
 
-🟢 1. Cadastrar Conta (POST)
-Cria um novo registro de despesa vinculado a um fornecedor.
+API REST desenvolvida com Spring Boot para gerenciamento financeiro, lançamentos de despesas e controle de pagamentos.
 
-URL: /api/contas-pagar
+## Base URL
+```
+http://localhost:8080/api/contas
+```
 
-Método: POST
+---
 
-Autenticação: Requer Bearer Token (Perfil: ADMIN ou GERENTE)
+## Autenticação no Postman
 
-Estrutura do JSON (Request):
+Para acessar os endpoints protegidos, é necessário configurar o Bearer Token:
 
-JSON
+1. Realize o login no endpoint `/auth/login`.
+2. Copie o valor do campo `token` da resposta.
+3. No Postman, vá em **Authorization** -> **Type: Bearer Token** e cole o código.
+
+---
+
+## Endpoints
+
+### Lançar nova conta
+
+**POST** \
+`http://localhost:8080/api/contas`
+
+Registra uma nova conta a pagar vinculada a um usuário específico.
+
+### Body
+```json
 {
-"fornecedorId": 6020,
-"descricao": "Compra de engradados de cerveja",
-"valor": 1500.00,
-"dataVencimento": "2026-04-20",
-"categoria": "ESTOQUE"
+  "descricao": "Aluguel Escritório",
+  "valor": 1500.00,
+  "dataVencimento": "2026-04-05",
+  "usuarioId": 1
 }
-🔵 2. Listar Contas (GET)
-Retorna todas as contas ou filtra por um fornecedor específico.
+```
 
-URL: /api/contas-pagar
-
-Método: GET
-
-Parâmetros Opcionais (Query Params):
-
-fornecedorId: Filtra as contas de um fornecedor específico (Ex: ?fornecedorId=6020).
-
-Exemplo de Resposta (200 OK):
-
-JSON
-[
+### Resposta
+```json
 {
-"id": 1,
-"descricao": "Compra de engradados de cerveja",
-"valor": 1500.00,
-"fornecedorNome": "Allyson Ramos Distribuidora",
-"status": "PENDENTE"
+    "id": 102,
+    "descricao": "Aluguel Escritório",
+    "valor": 1500.0,
+    "dataVencimento": "2026-04-05",
+    "status": "PENDENTE",
+    "nomeUsuario": "Allyson"
 }
-]
-🟡 3. Atualizar Conta (PUT)
-Altera dados de uma conta existente.
+```
 
-URL: /api/contas-pagar/{id}
+---
 
-Método: PUT
+### Listar todas as contas
 
-🔴 4. Excluir Conta (DELETE)
-Remove uma conta do sistema.
+**GET** \
+`http://localhost:8080/api/contas`
 
-URL: /api/contas-pagar/{id}
+Retorna o histórico completo de lançamentos financeiros cadastrados.
 
-Método: DELETE
+---
 
-Autenticação: Apenas perfil ADMIN.
+### Baixar conta (Pagar)
+
+**PATCH** \
+`http://localhost:8080/api/contas/{id}/pagar`
+
+Altera o status da conta de **PENDENTE** para **PAGO**.
+
+---
+
+### Atualizar conta
+
+**PUT** \
+`http://localhost:8080/api/contas/{id}`
+
+Atualiza todos os dados de uma conta específica (descrição, valor ou vencimento).
+
+---
+
+### Excluir lançamento
+
+**DELETE** \
+`http://localhost:8080/api/contas/{id}`
+
+Remove permanentemente o registro da conta do banco de dados.
+
+---
+

@@ -1,127 +1,102 @@
-Perfeito, um arquivo `README.md` ou `API_DOCUMENTATION.md` bem estruturado é essencial para que o seu "eu do futuro" ou outros desenvolvedores saibam como interagir com o sistema.
 
-Como você já tem o **Spring Security** e o **JWT** rodando, a documentação precisa deixar claro onde o token é necessário.
+# API - Gestão de Usuários
 
-Aqui está um modelo completo em Markdown para você copiar e adaptar:
+API REST desenvolvida com Spring Boot para controle de acesso, perfis e autenticação.
 
----
-
-# 📖 Documentação da API - Módulo de Usuários
-
-Esta API gerencia a autenticação e o cadastro de usuários para o ecossistema **O-Pai-Ó**.
-
-## 🔐 Autenticação
-
-A maioria dos endpoints requer um **JSON Web Token (JWT)** enviado no cabeçalho da requisição.
-
-**Cabeçalho esperado:**
-
-```http
-Authorization: Bearer <seu_token_aqui>
-
+## Base URL
+```
+http://localhost:8080/api/usuarios
 ```
 
 ---
 
-## 🚀 Endpoints de Usuários
+## Autenticação no Postman
 
-### 1. Autenticação (Login)
+Para acessar os endpoints protegidos, é necessário configurar o Bearer Token:
 
-Realiza o login e retorna o token de acesso.
+1. Realize o login no endpoint `/auth/login`.
+2. Copie o valor do campo `token` da resposta.
+3. No Postman, vá em **Authorization** -> **Type: Bearer Token** e cole o código.
 
-* **URL:** `/auth/login`
-* **Método:** `POST`
-* **Autenticação Requerida:** Não
+---
 
-**Corpo da Requisição (JSON):**
+## Endpoints
 
+### Autenticação (Login)
+
+**POST** `http://localhost:8080/auth/login`
+
+Realiza o acesso e retorna o token JWT.
+
+### Body
 ```json
 {
-  "login": "seu_usuario",
-  "senha": "sua_senha"
+  "login": "allyson",
+  "senha": "123"
 }
-
 ```
 
-**Resposta de Sucesso (200 OK):**
-
+### Resposta
 ```json
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "nome": "Allyson Lapa"
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "nome": "Allyson",
+    "perfil": "ADMIN"
 }
-
 ```
 
 ---
 
-### 2. Cadastro de Usuário
+### Criar usuário
+
+**POST** `http://localhost:8080/api/usuarios`
 
 Cria um novo usuário no sistema.
 
-* **URL:** `/auth/register` (ou `/api/usuarios`)
-* **Método:** `POST`
-* **Autenticação Requerida:** Depende da sua config (geralmente `permitAll`)
-
-**Corpo da Requisição:**
-
+### Body
 ```json
 {
-  "login": "joao_silva",
-  "senha": "senha123",
   "nome": "João Silva",
-  "role": "USER"
+  "login": "joao.dev",
+  "senha": "123"
 }
-
 ```
 
----
-
-### 3. Listar Usuários
-
-Retorna a lista de todos os usuários cadastrados.
-
-* **URL:** `/api/usuarios`
-* **Método:** `GET`
-* **Autenticação Requerida:** **Sim (Bearer Token)**
-
-**Resposta de Sucesso (200 OK):**
-
+### Resposta
 ```json
-[
-  {
-    "id": 1,
-    "login": "admin",
-    "nome": "Administrador"
-  },
-  {
-    "id": 2,
-    "login": "joao_silva",
-    "nome": "João Silva"
-  }
-]
-
+{
+    "id": 15,
+    "nome": "João Silva",
+    "login": "joao.dev",
+    "perfil": "USUARIO",
+    "ativo": true,
+    "data_cadastro": "2026-03-20T19:30:00"
+}
 ```
 
 ---
 
-## ⚠️ Códigos de Resposta (Status Codes)
+### Listar usuários
 
-| Código | Descrição | Motivo Comum |
-| --- | --- | --- |
-| **200** | OK | Requisição realizada com sucesso. |
-| **201** | Created | Recurso criado com sucesso (POST). |
-| **400** | Bad Request | Dados inválidos no corpo da requisição. |
-| **403** | Forbidden | Token ausente, inválido ou expirado. |
-| **404** | Not Found | Usuário ou endpoint não encontrado. |
+**GET** `http://localhost:8080/api/usuarios`
+
+Retorna todos os usuários cadastrados.
 
 ---
 
-## 🛠️ Como testar no Postman/Insomnia
+### Tornar Administrador
 
-1. Chame o endpoint `/auth/login`.
-2. Copie o campo `token` da resposta.
-3. Nas próximas chamadas, vá na aba **Authorization**, selecione **Bearer Token** e cole o valor.
+**PATCH** `http://localhost:8080/api/usuarios/tornar-admin/{id}`
+
+Atualiza o perfil do usuário para **ADMIN**.
+
+---
+
+### Deletar usuário
+
+**DELETE** `http://localhost:8080/api/usuarios/{id}`
+
+Realiza a inativação lógica do usuário.
 
 ---
 
