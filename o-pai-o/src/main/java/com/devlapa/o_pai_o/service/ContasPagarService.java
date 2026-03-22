@@ -1,8 +1,8 @@
 package com.devlapa.o_pai_o.service;
 
 import com.devlapa.o_pai_o.domain.contas.*;
-import com.devlapa.o_pai_o.repositories.ContaPagarRepository;
 import com.devlapa.o_pai_o.repositories.ContasPagarRepository;
+import com.devlapa.o_pai_o.repositories.FornecedoresRepository;
 import com.devlapa.o_pai_o.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +17,9 @@ public class ContasPagarService {
     private ContasPagarRepository repository;
 
     @Autowired
+    private FornecedoresRepository fornecedorRepository;
+
+    @Autowired
     private UsuarioRepository usuarioRepository;
 
     public List<ContaPagar> listarTodas() {
@@ -25,14 +28,18 @@ public class ContasPagarService {
 
     @Transactional
     public ContaPagar salvar(DadosCadastroContaPagar dados) {
-        var usuario = usuarioRepository.findById(dados.usuarioId())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        var fornecedor = fornecedorRepository.findById(dados.fornecedorId())
+                .orElseThrow(() -> new RuntimeException("Fornecedor não encontrado"));
 
         var conta = new ContaPagar();
         conta.setDescricao(dados.descricao());
         conta.setValor(dados.valor());
         conta.setDataVencimento(dados.dataVencimento());
-        conta.setUsuario(usuario);
+
+
+        conta.setFornecedor(fornecedor);
+
         conta.setStatus(StatusConta.PENDENTE);
 
         return repository.save(conta);
@@ -54,7 +61,7 @@ public class ContasPagarService {
     public void marcarComoPaga(Long id) {
         var conta = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
-        conta.setStatus(StatusConta.PAGO);
+        conta.setStatus(StatusConta.PAGA);
         repository.save(conta);
     }
 
