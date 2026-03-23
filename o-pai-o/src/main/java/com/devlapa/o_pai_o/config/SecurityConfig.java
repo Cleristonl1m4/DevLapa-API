@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity // ATIVA O @PreAuthorize NOS CONTROLLERS
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -29,11 +29,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        // Rota de Login: Sempre liberada
+
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
 
-                        // Todo o resto exige apenas que o usuário esteja logado (Token válido)
-                        // A permissão específica (ADMIN/GERENTE) será checada no Controller
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
