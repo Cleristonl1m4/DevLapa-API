@@ -1,7 +1,9 @@
 package com.devlapa.o_pai_o.controllers;
 
-import com.devlapa.o_pai_o.domain.estoque.DadosCadastroEstoque;
-import com.devlapa.o_pai_o.domain.estoque.DadosDetalhamentoEstoque;
+import com.devlapa.o_pai_o.domain.estoque.EstoquePatchDTO;
+import com.devlapa.o_pai_o.domain.estoque.EstoqueRequestDTO;
+import com.devlapa.o_pai_o.domain.estoque.EstoqueResponseDTO;
+import com.devlapa.o_pai_o.repositories.EstoqueRepository;
 import com.devlapa.o_pai_o.service.EstoqueService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,30 +15,39 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("estoque")
+@RequestMapping("/api/estoque")
 public class EstoqueController {
 
     @Autowired
     private EstoqueService service;
 
-    @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE')")
-    public ResponseEntity<Void> cadastrar(@RequestBody @Valid DadosCadastroEstoque dados) {
-        service.cadastrar(dados);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
+    @Autowired
+    private EstoqueRepository repository;
 
     @GetMapping
-    public ResponseEntity<List<DadosDetalhamentoEstoque>> listar() {
+    public ResponseEntity<List<EstoqueResponseDTO>> listar() {
         var lista = service.listarTodos();
         return ResponseEntity.ok(lista);
     }
 
-    @PatchMapping("/{id}/entrada")
+
+    @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE')")
+    public ResponseEntity<Void> cadastrar(@RequestBody @Valid EstoqueRequestDTO dados) {
+        service.cadastrar(dados);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PatchMapping ("/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_GERENTE')")
-    public ResponseEntity<Void> entrada(@PathVariable Long id, @RequestParam Integer qtd) {
-        service.registrarEntrada(id, qtd);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<EstoqueResponseDTO> registrarEntrada(
+            @PathVariable Long id,
+            @RequestBody @Valid EstoquePatchDTO dto) {
+
+        service.registrarEntrada(id, dto.quantidade());
+
+        var estoque = repository.getReferenceById(id);
+        return ResponseEntity.ok(new EstoqueResponseDTO(estoque));
     }
 
     @DeleteMapping("/{id}")

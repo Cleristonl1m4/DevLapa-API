@@ -2,7 +2,7 @@ package com.devlapa.o_pai_o.domain.estoque;
 
 import java.time.LocalDateTime;
 
-public record DadosDetalhamentoEstoque(
+public record EstoqueResponseDTO(
         Long id,
         String nomeProduto,
         Integer quantidade,
@@ -11,7 +11,7 @@ public record DadosDetalhamentoEstoque(
         LocalDateTime dataUltimaMovimentacao
 ) {
 
-    public DadosDetalhamentoEstoque(Estoque estoque) {
+    public EstoqueResponseDTO(Estoque estoque) {
         this(
                 estoque.getId(),
                 estoque.getProduto().getNome(),

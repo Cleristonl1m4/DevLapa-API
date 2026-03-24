@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 
-public record DadosCadastroEstoque(
+public record EstoqueRequestDTO(
     @NotNull Long produtoId,
     @NotNull @Positive Integer quantidade,
     @NotNull @Positive Integer minimo
