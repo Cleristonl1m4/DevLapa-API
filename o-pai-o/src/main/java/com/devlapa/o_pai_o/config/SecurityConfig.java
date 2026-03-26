@@ -34,7 +34,8 @@ public class SecurityConfig {
 
                         // Todo o resto exige apenas que o usuário esteja logado (Token válido)
                         // A permissão específica (ADMIN/GERENTE) será checada no Controller
-                        .anyRequest().authenticated()
+                        //.anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

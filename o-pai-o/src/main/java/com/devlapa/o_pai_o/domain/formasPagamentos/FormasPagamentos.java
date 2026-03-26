@@ -26,6 +26,7 @@ public class FormasPagamentos {
     @Column(nullable = false)
     private String tipo;
 
+    @Column(name = "permit_parcelamento")
     private boolean permitirParcelamento;
 
     private boolean ativo;
@@ -37,6 +38,7 @@ public class FormasPagamentos {
 
     public void PrePersist(){
         this.ativo = true;
+        this.permitirParcelamento = false;
         this.data_criacao = LocalDateTime.now();
         this.data_modificacao = LocalDateTime.now();
     }
