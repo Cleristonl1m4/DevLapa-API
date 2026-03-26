@@ -26,12 +26,15 @@ Controle de comandas
  Fornecedores 
 
 ## Tarefas atribuídas
-| Tarefa | Responsável | Prazo |
+
+| Tarefa | Responsável | Prazo | 
+|--------|-------------|-------|
 | Prototipo Figma | Amanda | 12/03 |
 | Modelagem do BD | Clériston | 12/03 |
 | Organização do Trello e sprints | Allyson | 12/03 |
 | Definição das tecnologias e estrutura do sistemas | Equipe | 12/03 |
 | Documentação e Levantamento de requisitos | Débora | 12/03 |
+
 
 # Ata — 26/03/2026
 
