@@ -48,7 +48,7 @@ cd <DevLapa>
 cd devlapa-api
 
 # Instale as dependências e gere o build
-mvn clean install
+mvn clean install 
 ```
 
 ### Executar localmente
