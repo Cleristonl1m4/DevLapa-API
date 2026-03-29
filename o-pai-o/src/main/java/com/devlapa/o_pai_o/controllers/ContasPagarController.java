@@ -35,7 +35,7 @@ public class ContasPagarController {
     }
 
     @PatchMapping("/{id}/pagar")
-    @PreAuthorize("hasRole('ADMIN', 'GERENTE')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_GERENTE')")
     public ResponseEntity<Void> pagar(@PathVariable Long id) {
         service.marcarComoPaga(id);
         return ResponseEntity.noContent().build();
