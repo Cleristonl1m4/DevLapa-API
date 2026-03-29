@@ -34,6 +34,12 @@ public class Produtos {
     @Column(nullable = false)
     private String unidade;
 
+    @Column(name = "estoque_atual")
+    private Integer estoque_atual;
+
+    @Column(name = "estoque_minimo")
+    private Integer estoque_minimo;
+
     @ManyToOne
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categorias categoria;

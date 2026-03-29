@@ -43,8 +43,14 @@ public class UsuarioService {
         usuario.setLogin(dto.login());
         usuario.setHash(passwordEncoder.encode(dto.senha()));
         usuario.setAtivo(true);
-        usuario.setPerfil("USUARIO");
         usuario.setDataCadastro(LocalDateTime.now());
+
+
+        if (dto.perfil() != null && !dto.perfil().isBlank()) {
+            usuario.setPerfil(dto.perfil().toUpperCase());
+        } else {
+            usuario.setPerfil("USUARIO");
+        }
 
         Usuarios salvo = usuarioRepository.save(usuario);
         return new UsuariosResponseDTO(

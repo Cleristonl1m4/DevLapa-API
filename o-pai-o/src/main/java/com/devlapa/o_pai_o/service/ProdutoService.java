@@ -59,10 +59,19 @@ public class ProdutoService {
     public List<ProdutosResponseDTO> getProdutos(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Produtos> produtosPage = this.produtosRepository.findAll(pageable);
-        return produtosPage.map(event -> new ProdutosResponseDTO((long)Math.toIntExact(event.getId()), event.getNome(),
-                event.getPreco(), event.getUnidade(),event.getCategoria(),event.getFornecedor(),event.getAtivo(), event.getDataCriacao()))
-                .stream()
-                .toList();
+
+        return produtosPage.map(event -> new ProdutosResponseDTO(
+                event.getId(),
+                event.getNome(),
+                event.getPreco(),
+                event.getUnidade(),
+                event.getCategoria(),
+                event.getFornecedor(),
+                event.getAtivo(),
+                event.getDataCriacao(),
+                event.getEstoque_atual(),
+                event.getEstoque_minimo()
+        )).toList();
     }
 
     public void deleteProduto(Long id) {

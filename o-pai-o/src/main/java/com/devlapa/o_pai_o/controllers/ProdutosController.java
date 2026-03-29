@@ -1,5 +1,7 @@
 package com.devlapa.o_pai_o.controllers;
 
+import com.devlapa.o_pai_o.domain.fornecedores.FornecedoresRequestDTO;
+import com.devlapa.o_pai_o.domain.fornecedores.FornecedoresResponseDTO;
 import com.devlapa.o_pai_o.domain.produtos.Produtos;
 import com.devlapa.o_pai_o.domain.produtos.ProdutosRequestDTO;
 import com.devlapa.o_pai_o.domain.produtos.ProdutosResponseDTO;
@@ -24,13 +26,14 @@ public class ProdutosController {
     @Autowired
     ProdutosRepository produtosRepository;
 
+
     @PostMapping
     public ResponseEntity<Produtos> create(@RequestBody @Validated ProdutosRequestDTO body){
-            Produtos newProduto = this.produtoService.createproduto(body);
-            return ResponseEntity.ok(newProduto);
+        Produtos newProduto = this.produtoService.createproduto(body);
+        return ResponseEntity.ok(newProduto);
     }
 
-    @GetMapping
+
     public ResponseEntity<List<ProdutosResponseDTO>> getProdutosList(@RequestParam(defaultValue = "0") int page, @RequestParam (defaultValue = "10") int size){
         List<ProdutosResponseDTO> allProdutos = this.produtoService.getProdutos(page,size);
         return ResponseEntity.ok(allProdutos);

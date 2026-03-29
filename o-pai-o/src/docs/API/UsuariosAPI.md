@@ -60,7 +60,7 @@ Cria um novo usuário no sistema.
   "login": "joao.dev",
   "senha": "123"
 }
-```
+```     
 
 ### Resposta
 ```json

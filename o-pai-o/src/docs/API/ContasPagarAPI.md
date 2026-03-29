@@ -1,6 +1,6 @@
-# API - Gestão de Contas a Pagar
+# API - Gestao de Contas a Pagar
 
-API REST desenvolvida com Spring Boot para gerenciamento financeiro, lançamentos de despesas e controle de pagamentos.
+API REST desenvolvida com Spring Boot para gerenciamento financeiro, lancamentos de despesas e controle de pagamentos.
 
 ## Base URL
 ```
@@ -9,44 +9,46 @@ http://localhost:8080/api/contas
 
 ---
 
-## Autenticação no Postman
+## Autenticacao no Postman
 
-Para acessar os endpoints protegidos, é necessário configurar o Bearer Token:
+Para acessar os endpoints protegidos, e necessario configurar o Bearer Token:
 
 1. Realize o login no endpoint `/auth/login`.
 2. Copie o valor do campo `token` da resposta.
-3. No Postman, vá em **Authorization** -> **Type: Bearer Token** e cole o código.
+3. No Postman, va em **Authorization** -> **Type: Bearer Token** e cole o codigo.
 
 ---
 
 ## Endpoints
 
-### Lançar nova conta
+### Lancar nova conta
 
 **POST** \
 `http://localhost:8080/api/contas`
 
-Registra uma nova conta a pagar vinculada a um usuário específico.
+Registra uma nova conta a pagar vinculada a um fornecedor.
 
 ### Body
 ```json
 {
-  "descricao": "Aluguel Escritório",
+  "descricao": "Aluguel Escritorio",
   "valor": 1500.00,
   "dataVencimento": "2026-04-05",
-  "usuarioId": 1
+  "fornecedorId": 1,
+  "categoria": "ALUGUEL"
 }
 ```
 
 ### Resposta
 ```json
 {
-    "id": 102,
-    "descricao": "Aluguel Escritório",
-    "valor": 1500.0,
-    "dataVencimento": "2026-04-05",
-    "status": "PENDENTE",
-    "nomeUsuario": "Allyson"
+  "id": 102,
+  "descricao": "Aluguel Escritorio",
+  "valor": 1500.0,
+  "dataVencimento": "2026-04-05",
+  "dataPagamento": null,
+  "categoria": "ALUGUEL",
+  "status": "PENDENTE"
 }
 ```
 
@@ -57,7 +59,7 @@ Registra uma nova conta a pagar vinculada a um usuário específico.
 **GET** \
 `http://localhost:8080/api/contas`
 
-Retorna o histórico completo de lançamentos financeiros cadastrados.
+Retorna o historico completo de lancamentos financeiros cadastrados.
 
 ---
 
@@ -66,7 +68,9 @@ Retorna o histórico completo de lançamentos financeiros cadastrados.
 **PATCH** \
 `http://localhost:8080/api/contas/{id}/pagar`
 
-Altera o status da conta de **PENDENTE** para **PAGO**.
+Altera o status da conta de **PENDENTE** para **PAGA** e preenche `dataPagamento`.
+
+Se o `id` nao existir, a API agora responde com `404 Not Found`.
 
 ---
 
@@ -75,11 +79,11 @@ Altera o status da conta de **PENDENTE** para **PAGO**.
 **PUT** \
 `http://localhost:8080/api/contas/{id}`
 
-Atualiza todos os dados de uma conta específica (descrição, valor ou vencimento).
+Atualiza os dados de uma conta especifica, incluindo `fornecedorId`, `descricao`, `valor`, `categoria` e `dataVencimento`.
 
 ---
 
-### Excluir lançamento
+### Excluir lancamento
 
 **DELETE** \
 `http://localhost:8080/api/contas/{id}`
@@ -87,4 +91,3 @@ Atualiza todos os dados de uma conta específica (descrição, valor ou vencimen
 Remove permanentemente o registro da conta do banco de dados.
 
 ---
-
