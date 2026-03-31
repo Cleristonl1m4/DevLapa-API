@@ -6,7 +6,7 @@ import com.devlapa.o_pai_o.domain.comandas.ItemComanda;
 import com.devlapa.o_pai_o.domain.comandas.StatusComanda;
 import com.devlapa.o_pai_o.domain.produtos.Produtos;
 import com.devlapa.o_pai_o.repositories.ComandaRepository;
-import com.devlapa.o_pai_o.repositories.ItemComandaRepository; // Importante!
+import com.devlapa.o_pai_o.repositories.ItemComandaRepository;
 import com.devlapa.o_pai_o.repositories.ProdutosRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
