@@ -15,5 +15,7 @@ public record ProdutosResponseDTO(
         Categorias categoria,
         Fornecedores fornecedor,
         Boolean ativo,
-        LocalDateTime datacricao
+        LocalDateTime datacricao,
+        Integer estoque_atual,
+        Integer estoque_minimo
 ) {}

@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 public class Produtos {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -33,6 +34,12 @@ public class Produtos {
 
     @Column(nullable = false)
     private String unidade;
+
+    @Column(name = "estoque_atual")
+    private Integer estoque_atual;
+
+    @Column(name = "estoque_minimo")
+    private Integer estoque_minimo;
 
     @ManyToOne
     @JoinColumn(name = "categoria_id", nullable = false)
