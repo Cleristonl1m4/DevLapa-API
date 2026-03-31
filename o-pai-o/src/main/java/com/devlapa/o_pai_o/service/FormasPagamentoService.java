@@ -4,14 +4,16 @@ import com.devlapa.o_pai_o.domain.formasPagamentos.FormasPagamentoResponseDTO;
 import com.devlapa.o_pai_o.domain.formasPagamentos.FormasPagamentos;
 import com.devlapa.o_pai_o.domain.formasPagamentos.FormasPagamentosRequestDTO;
 import com.devlapa.o_pai_o.repositories.FormasPagamentosRopository;
-import org.hibernate.annotations.processing.Find;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class FormasPagamentoService {
@@ -52,5 +54,17 @@ public class FormasPagamentoService {
                 event.getData_modificacao()
         )).stream().toList();
 
+    }
+
+    public FormasPagamentos updareFormasDePagamento(Long id, Map<String, Object> fields) {
+        FormasPagamentos updadteFormapagamento = formasPagamentosRopository.findById(id)
+                .orElseThrow(()->new RuntimeException("Forma de pagamento não encontrada."));
+        fields.forEach((k,v)->{
+            Field field = ReflectionUtils.findField(FormasPagamentos.class, k);
+            field.setAccessible(true);
+            ReflectionUtils.setField(field,updadteFormapagamento,v);
+
+        });
+        return formasPagamentosRopository.save(updadteFormapagamento);
     }
 }
