@@ -37,7 +37,18 @@ public class VendasController {
         return ResponseEntity.ok(allVendas);
     }
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','GERENTE','USUARIO')")
     public ResponseEntity<VendasResponseDTO> getIdVenda(@PathVariable Long id){
         return ResponseEntity.ok(vendasService.getVendaById(id));
+    }
+
+    @PatchMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','GERENTE','USUARIO')")
+    public ResponseEntity<VendasResponseDTO> updateVendas(@PathVariable Long id, @RequestBody VendasRequestDTO body){
+        try{
+            return ResponseEntity.ok(vendasService.updadeVenda(id,body));
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
 }
