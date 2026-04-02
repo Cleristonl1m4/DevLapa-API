@@ -1,5 +1,7 @@
 package com.devlapa.o_pai_o.domain.usuarios;
 
+import com.devlapa.o_pai_o.domain.vendas.Vendas;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -103,4 +105,8 @@ public class Usuarios implements UserDetails {
     public boolean isEnabled() {
         return ativo != null ? ativo : true;
     }
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "usuarioCriacao",cascade = CascadeType.ALL)
+    private List<Vendas> vends;
 }

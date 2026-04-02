@@ -1,11 +1,11 @@
 package com.devlapa.o_pai_o.domain.vendas;
 
 import com.devlapa.o_pai_o.domain.formasPagamentos.FormasPagamentos;
+import com.devlapa.o_pai_o.domain.usuarios.Usuarios;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table (name = "vendas")
@@ -13,14 +13,14 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class venda {
+public class Vendas {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "formas_pagamentos_id",nullable = false)
+    @JoinColumn(name = "formadepagamento_id",nullable = false)
     private FormasPagamentos formasPagamentos;
 
     @Column(nullable = false)
@@ -29,5 +29,15 @@ public class venda {
     @Enumerated(EnumType.STRING)
     private StatusVenda status = StatusVenda.ABERTA;
 
+    private LocalDateTime data_criacao;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id",nullable = false)
+    private Usuarios usuarioCriacao;
+
+    @PrePersist
+    public void PrePersist(){
+        this.data_criacao = LocalDateTime.now();
+    }
 
 }

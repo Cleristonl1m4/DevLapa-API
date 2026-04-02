@@ -19,5 +19,5 @@ CREATE TABLE itens_vendas(
                              sub_total DECIMAL (10, 2) NOT NULL,
 
                              CONSTRAINT fk_itens_vendas_vendas FOREIGN KEY (vendas_id) REFERENCES vendas(id),
-                             CONSTRAINT fk_itens_vendas_produto FOREIGN KEY (produto_id) REFERENCES produtos(id);
+                             CONSTRAINT fk_itens_vendas_produto FOREIGN KEY (produto_id) REFERENCES produtos(id)
 );
