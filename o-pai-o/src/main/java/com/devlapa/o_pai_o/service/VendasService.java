@@ -10,7 +10,12 @@ import com.devlapa.o_pai_o.repositories.FormasPagamentosRopository;
 import com.devlapa.o_pai_o.repositories.UsuarioRepository;
 import com.devlapa.o_pai_o.repositories.VendasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class VendasService {
@@ -54,5 +59,29 @@ public class VendasService {
                 vendasSalva.getData_criacao(),
                 usuarioResumoDTO
         );
+    }
+
+    public List<VendasResponseDTO> getVendas(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Vendas> vendasPage =this.vendasRepository.findAll(pageable);
+        return vendasPage.map(event ->{
+            Usuarios usuarios = event.getUsuarioCriacao();
+
+            UsuarioResumoDTO usuarioResumoDTO = new UsuarioResumoDTO(
+                    usuarios.getId(),
+                    usuarios.getNome(),
+                    usuarios.getPerfil()
+            );
+
+            return new VendasResponseDTO(
+                    event.getId(),
+                    event.getFormasPagamentos(),
+                    event.getValor_total(),
+                    event.getStatus(),
+                    event.getData_criacao(),
+                    usuarioResumoDTO
+            );
+        }).toList();
+
     }
 }
