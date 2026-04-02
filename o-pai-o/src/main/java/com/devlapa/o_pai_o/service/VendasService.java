@@ -1,20 +1,21 @@
 package com.devlapa.o_pai_o.service;
 
 import com.devlapa.o_pai_o.domain.formasPagamentos.FormasPagamentos;
-import com.devlapa.o_pai_o.domain.usuarios.UsuarioResumoDTO;
 import com.devlapa.o_pai_o.domain.usuarios.Usuarios;
 import com.devlapa.o_pai_o.domain.vendas.Vendas;
 import com.devlapa.o_pai_o.domain.vendas.VendasRequestDTO;
 import com.devlapa.o_pai_o.domain.vendas.VendasResponseDTO;
 import com.devlapa.o_pai_o.mapper.UsuarioMapper;
+import com.devlapa.o_pai_o.mapper.VendasMapper;
 import com.devlapa.o_pai_o.repositories.FormasPagamentosRopository;
-import com.devlapa.o_pai_o.repositories.UsuarioRepository;
 import com.devlapa.o_pai_o.repositories.VendasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -74,14 +75,37 @@ public class VendasService {
 
     public VendasResponseDTO getVendaById(Long id) {
         Vendas vendas = vendasRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException ("Venda não encontrada!"));
-        return new VendasResponseDTO(
-                vendas.getId(),
-                vendas.getFormasPagamentos(),
-                vendas.getValor_total(),
-                vendas.getStatus(),
-                vendas.getData_criacao(),
-                UsuarioMapper.toDTO(vendas.getUsuarioCriacao())
-        );
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Venda não encontrada!"));
+        try{
+            return new VendasResponseDTO(
+                    vendas.getId(),
+                    vendas.getFormasPagamentos(),
+                    vendas.getValor_total(),
+                    vendas.getStatus(),
+                    vendas.getData_criacao(),
+                    UsuarioMapper.toDTO(vendas.getUsuarioCriacao())
+            );
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public VendasResponseDTO updadeVenda(Long id, VendasRequestDTO body) {
+        Vendas vendas = vendasRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Venda não encontrada!"));
+        if(body.formasPagamentosId() != null){
+            FormasPagamentos form = formasPagamentosRopository.findById(body.formasPagamentosId())
+                    .orElseThrow(() -> new RuntimeException("Forma de pagamento não encontrada"));
+            vendas.setFormasPagamentos(form);
+        }
+        if(body.valor_total() != null){
+            vendas.setValor_total(body.valor_total());
+        }
+        if(body.statusVenda() != null){
+            vendas.setStatus(body.statusVenda());
+        }
+        vendasRepository.save(vendas);
+        return VendasMapper.toDTO(vendas);
     }
 }
