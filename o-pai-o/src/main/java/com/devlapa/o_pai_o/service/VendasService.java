@@ -6,6 +6,7 @@ import com.devlapa.o_pai_o.domain.usuarios.Usuarios;
 import com.devlapa.o_pai_o.domain.vendas.Vendas;
 import com.devlapa.o_pai_o.domain.vendas.VendasRequestDTO;
 import com.devlapa.o_pai_o.domain.vendas.VendasResponseDTO;
+import com.devlapa.o_pai_o.mapper.UsuarioMapper;
 import com.devlapa.o_pai_o.repositories.FormasPagamentosRopository;
 import com.devlapa.o_pai_o.repositories.UsuarioRepository;
 import com.devlapa.o_pai_o.repositories.VendasRepository;
@@ -23,8 +24,6 @@ public class VendasService {
     VendasRepository vendasRepository;
     @Autowired
     FormasPagamentosRopository formasPagamentosRopository;
-    @Autowired
-    UsuarioRepository usuarioRepository;
 
     public VendasResponseDTO createVenda(VendasRequestDTO body, Usuarios usuarios) {
         FormasPagamentos formasPagamentos = formasPagamentosRopository.findById(body.formasPagamentosId())
@@ -45,11 +44,6 @@ public class VendasService {
 
         Vendas vendasSalva = vendasRepository.save(newVenda);
 
-        UsuarioResumoDTO usuarioResumoDTO = new UsuarioResumoDTO(
-                usuarios.getId(),
-                usuarios.getNome(),
-                usuarios.getPerfil()
-        );
 
         return new VendasResponseDTO(
                 vendasSalva.getId(),
@@ -57,7 +51,7 @@ public class VendasService {
                 vendasSalva.getValor_total(),
                 vendasSalva.getStatus(),
                 vendasSalva.getData_criacao(),
-                usuarioResumoDTO
+                UsuarioMapper.toDTO(vendasSalva.getUsuarioCriacao())
         );
     }
 
@@ -65,13 +59,6 @@ public class VendasService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Vendas> vendasPage =this.vendasRepository.findAll(pageable);
         return vendasPage.map(event ->{
-            Usuarios usuarios = event.getUsuarioCriacao();
-
-            UsuarioResumoDTO usuarioResumoDTO = new UsuarioResumoDTO(
-                    usuarios.getId(),
-                    usuarios.getNome(),
-                    usuarios.getPerfil()
-            );
 
             return new VendasResponseDTO(
                     event.getId(),
@@ -79,9 +66,22 @@ public class VendasService {
                     event.getValor_total(),
                     event.getStatus(),
                     event.getData_criacao(),
-                    usuarioResumoDTO
+                    UsuarioMapper.toDTO(event.getUsuarioCriacao())
             );
         }).toList();
 
+    }
+
+    public VendasResponseDTO getVendaById(Long id) {
+        Vendas vendas = vendasRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException ("Venda não encontrada!"));
+        return new VendasResponseDTO(
+                vendas.getId(),
+                vendas.getFormasPagamentos(),
+                vendas.getValor_total(),
+                vendas.getStatus(),
+                vendas.getData_criacao(),
+                UsuarioMapper.toDTO(vendas.getUsuarioCriacao())
+        );
     }
 }

@@ -24,15 +24,20 @@ public class VendasController {
     UsuarioRepository userRepository;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN','GERENTE')")
+    @PreAuthorize("hasAnyRole('ADMIN','GERENTE','USUARIO')")
     public ResponseEntity<VendasResponseDTO> postVendas(@RequestBody @Validated VendasRequestDTO body, @AuthenticationPrincipal Usuarios usuarios){
         VendasResponseDTO newVenda = this.vendasService.createVenda(body,usuarios);
         return ResponseEntity.ok(newVenda);
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','GERENTE','USUARIO')")
     public ResponseEntity<List<VendasResponseDTO>> listVendas(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
         List<VendasResponseDTO> allVendas = this.vendasService.getVendas(page,size);
         return ResponseEntity.ok(allVendas);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<VendasResponseDTO> getIdVenda(@PathVariable Long id){
+        return ResponseEntity.ok(vendasService.getVendaById(id));
     }
 }
