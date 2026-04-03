@@ -1,11 +1,14 @@
 package com.devlapa.o_pai_o.domain.formasPagamentos;
 
+import com.devlapa.o_pai_o.domain.vendas.Vendas;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "formas_de_pagamentos")
@@ -42,4 +45,7 @@ public class FormasPagamentos {
         this.data_criacao = LocalDateTime.now();
         this.data_modificacao = LocalDateTime.now();
     }
+    @JsonIgnore
+    @OneToMany(mappedBy = "formasPagamentos",cascade = CascadeType.ALL)
+    private List<Vendas> vendasList;
 }
