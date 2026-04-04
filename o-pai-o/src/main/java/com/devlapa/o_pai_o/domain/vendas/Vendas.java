@@ -1,11 +1,15 @@
 package com.devlapa.o_pai_o.domain.vendas;
 
 import com.devlapa.o_pai_o.domain.formasPagamentos.FormasPagamentos;
+import com.devlapa.o_pai_o.domain.itensVenda.ItensDeVenda;
 import com.devlapa.o_pai_o.domain.usuarios.Usuarios;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table (name = "vendas")
@@ -24,7 +28,7 @@ public class Vendas {
     private FormasPagamentos formasPagamentos;
 
     @Column(nullable = false)
-    private Double valor_total;
+    private BigDecimal valor_total;
 
     @Enumerated(EnumType.STRING)
     private StatusVenda status = StatusVenda.ABERTA;
@@ -39,5 +43,16 @@ public class Vendas {
     public void PrePersist(){
         this.data_criacao = LocalDateTime.now();
     }
+
+    public void iniciarPreco(){
+        if(valor_total==null){
+            valor_total = BigDecimal.ZERO;
+        }
+    }
+
+    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<ItensDeVenda> itens;
+
 
 }

@@ -2,6 +2,7 @@ package com.devlapa.o_pai_o.domain.produtos;
 
 import com.devlapa.o_pai_o.domain.categorias.Categorias;
 import com.devlapa.o_pai_o.domain.fornecedores.Fornecedores;
+import com.devlapa.o_pai_o.domain.itensVenda.ItensDeVenda;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -35,12 +36,6 @@ public class Produtos {
     @Column(nullable = false)
     private String unidade;
 
-    @Column(name = "estoque_atual")
-    private Integer estoque_atual;
-
-    @Column(name = "estoque_minimo")
-    private Integer estoque_minimo;
-
     @ManyToOne
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categorias categoria;
@@ -62,5 +57,8 @@ public class Produtos {
             this.ativo = true;
         }
     }
+    @OneToMany(mappedBy = "produto")
+    @JsonIgnore
+    private List<ItensDeVenda> itensDeVendas;
 
 }

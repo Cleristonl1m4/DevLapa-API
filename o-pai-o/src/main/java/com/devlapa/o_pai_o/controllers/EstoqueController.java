@@ -25,6 +25,7 @@ public class EstoqueController {
     private EstoqueRepository repository;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE')")
     public ResponseEntity<List<EstoqueResponseDTO>> listar() {
         var lista = service.listarTodos();
         return ResponseEntity.ok(lista);

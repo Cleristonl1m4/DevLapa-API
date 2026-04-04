@@ -18,6 +18,7 @@ public class VendasMapper {
         return  new VendasResponseDTO(
                 vendas.getId(),
                 vendas.getFormasPagamentos(),
+                vendas.getItens(),
                 vendas.getValor_total(),
                 vendas.getStatus(),
                 vendas.getData_criacao(),
