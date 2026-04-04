@@ -1,8 +1,9 @@
 package com.devlapa.o_pai_o.controllers;
 
-import com.devlapa.o_pai_o.domain.contas.ContaPagar;
+import com.devlapa.o_pai_o.domain.contas.ContaPagarResponseDTO;
 import com.devlapa.o_pai_o.domain.contas.DadosCadastroContaPagar;
 import com.devlapa.o_pai_o.service.ContasPagarService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,20 +19,20 @@ public class ContasPagarController {
     private ContasPagarService service;
 
     @GetMapping
-    public List<ContaPagar> listar() {
-        return service.listarTodas();
+    public List<ContaPagarResponseDTO> listar() {
+        return service.listarTodas().stream().map(ContaPagarResponseDTO::new).toList();
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN', 'GERENTE')")
-    public ResponseEntity<ContaPagar> cadastrar(@RequestBody DadosCadastroContaPagar dados) {
-        return ResponseEntity.ok(service.salvar(dados));
+    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE')")
+    public ResponseEntity<ContaPagarResponseDTO> cadastrar(@RequestBody @Valid DadosCadastroContaPagar dados) {
+        return ResponseEntity.ok(new ContaPagarResponseDTO(service.salvar(dados)));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN', 'GERENTE')")
-    public ResponseEntity<ContaPagar> editar(@PathVariable Long id, @RequestBody DadosCadastroContaPagar dados) {
-        return ResponseEntity.ok(service.atualizar(id, dados));
+    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE')")
+    public ResponseEntity<ContaPagarResponseDTO> editar(@PathVariable Long id, @RequestBody @Valid DadosCadastroContaPagar dados) {
+        return ResponseEntity.ok(new ContaPagarResponseDTO(service.atualizar(id, dados)));
     }
 
     @PatchMapping("/{id}/pagar")
@@ -42,7 +43,7 @@ public class ContasPagarController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN', 'GERENTE')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE')")
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         service.deletar(id);
         return ResponseEntity.noContent().build();
