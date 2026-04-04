@@ -4,8 +4,10 @@ import com.devlapa.o_pai_o.domain.comandas.Comanda;
 import com.devlapa.o_pai_o.domain.comandas.ComandaRequestDTO;
 import com.devlapa.o_pai_o.domain.comandas.ItemComanda;
 import com.devlapa.o_pai_o.domain.comandas.StatusComanda;
+import com.devlapa.o_pai_o.domain.estoque.Estoque;
 import com.devlapa.o_pai_o.domain.produtos.Produtos;
 import com.devlapa.o_pai_o.repositories.ComandaRepository;
+import com.devlapa.o_pai_o.repositories.EstoqueRepository;
 import com.devlapa.o_pai_o.repositories.ItemComandaRepository;
 import com.devlapa.o_pai_o.repositories.ProdutosRepository;
 import jakarta.transaction.Transactional;
@@ -26,6 +28,9 @@ public class ComandaService {
     @Autowired
     private ItemComandaRepository itemComandaRepository;
 
+    @Autowired
+    EstoqueRepository estoqueRepository;
+
     public Comanda abrirNovaComanda(ComandaRequestDTO dados) {
         Comanda comanda = new Comanda();
         comanda.setNumeroMesa(dados.numeroMesa());
@@ -44,8 +49,10 @@ public class ComandaService {
         Produtos produto = produtosRepository.findById(produtoId)
                 .orElseThrow(() -> new RuntimeException("ERRO: Produto ID " + produtoId + " não encontrado!"));
 
+        Estoque estoque = estoqueRepository.findByProdutoId(produtoId)
+                .orElseThrow(() -> new RuntimeException("Erro: O item" + produtoId + "solicitado não foi encontrado ou não possui estoque disponível"));
 
-        if (produto.getEstoque_atual() == null || produto.getEstoque_atual() < qtd) {
+        if (estoque.getQuantidade() == null || estoque.getQuantidade() < qtd) {
             throw new RuntimeException("Estoque insuficiente para o produto: " + produto.getNome());
         }
 
@@ -65,11 +72,11 @@ public class ComandaService {
 
 
         comanda.setValorTotal(comanda.getValorTotal().add(item.getSubtotal()));
-        produto.setEstoque_atual(produto.getEstoque_atual() - qtd);
+        estoque.setQuantidade(estoque.getQuantidade() - qtd);
 
 
         comandaRepository.save(comanda);
-
+        estoqueRepository.save(estoque);
 
         return itemComandaRepository.save(item);
     }
@@ -79,7 +86,6 @@ public class ComandaService {
         Comanda comanda = comandaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("ERRO: Comanda não encontrada!"));
 
-
         if (comanda.getStatus() != StatusComanda.ABERTA) {
             throw new RuntimeException("Não é possível cancelar uma comanda com status: " + comanda.getStatus());
         }
@@ -88,9 +94,10 @@ public class ComandaService {
         if (comanda.getItens() != null) {
             for (ItemComanda item : comanda.getItens()) {
                 Produtos produto = item.getProdutos();
-
-                produto.setEstoque_atual(produto.getEstoque_atual() + item.getQuantidade());
-                produtosRepository.save(produto);
+                Estoque estoque = estoqueRepository.findByProdutoId(produto.getId())
+                        .orElseThrow(() -> new RuntimeException("Erro: O item solicitado não foi encontrado ou não possui estoque disponível"));
+                estoque.setQuantidade(estoque.getQuantidade() + item.getQuantidade());
+                estoqueRepository.save(estoque);
             }
         }
 
@@ -99,6 +106,7 @@ public class ComandaService {
         comanda.setValorTotal(BigDecimal.ZERO);
 
         comandaRepository.save(comanda);
+
     }
 
     @Transactional

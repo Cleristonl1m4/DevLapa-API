@@ -1,5 +1,5 @@
 package com.devlapa.o_pai_o.domain.contas;
 
 public enum StatusConta {
-    PENDENTE, PAGA, CANCELADA
+    PENDENTE, RECEBIDO, CANCELADA, PAGA
 }

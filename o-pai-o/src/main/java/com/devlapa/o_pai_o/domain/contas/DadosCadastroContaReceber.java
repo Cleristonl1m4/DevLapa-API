@@ -6,12 +6,14 @@ import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-public record DadosCadastroContaPagar(
+public record DadosCadastroContaReceber(
         @NotNull Long usuarioId,
-        @NotNull Long fornecedorId,
+        @NotBlank String cliente,
         @NotBlank String descricao,
         @NotNull @Positive BigDecimal valor,
         @NotNull LocalDate dataVencimento,
-        @NotBlank String categoria
+        LocalDate dataRecebimento,
+        LocalDateTime dataCriacao
 ) { }

@@ -43,6 +43,7 @@ public class VendasController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','GERENTE','USUARIO')")
     public ResponseEntity<VendasResponseDTO> updateVendas(@PathVariable Long id, @RequestBody VendasRequestDTO body){
         try{
             return ResponseEntity.ok(vendasService.updadeVenda(id,body));

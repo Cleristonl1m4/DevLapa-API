@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -26,9 +27,11 @@ public class VendasService {
     @Autowired
     FormasPagamentosRopository formasPagamentosRopository;
 
+    @Transactional
     public VendasResponseDTO createVenda(VendasRequestDTO body, Usuarios usuarios) {
         FormasPagamentos formasPagamentos = formasPagamentosRopository.findById(body.formasPagamentosId())
                 .orElseThrow(()-> new RuntimeException("Forma de pagamento não encontrada"));
+
         Vendas newVenda = new Vendas();
         Usuarios usuarios1 = new Usuarios();
         usuarios1.setId(usuarios.getId());
@@ -39,7 +42,7 @@ public class VendasService {
         usuarios1.setDataCadastro(usuarios.getDataCadastro());
         newVenda.setFormasPagamentos(formasPagamentos);
         newVenda.setStatus(body.statusVenda());
-        newVenda.setValor_total(body.valor_total());
+        newVenda.iniciarPreco();
         newVenda.setUsuarioCriacao(usuarios1);
         newVenda.PrePersist();
 
@@ -49,6 +52,7 @@ public class VendasService {
         return new VendasResponseDTO(
                 vendasSalva.getId(),
                 vendasSalva.getFormasPagamentos(),
+                vendasSalva.getItens(),
                 vendasSalva.getValor_total(),
                 vendasSalva.getStatus(),
                 vendasSalva.getData_criacao(),
@@ -64,6 +68,7 @@ public class VendasService {
             return new VendasResponseDTO(
                     event.getId(),
                     event.getFormasPagamentos(),
+                    event.getItens(),
                     event.getValor_total(),
                     event.getStatus(),
                     event.getData_criacao(),
@@ -77,20 +82,14 @@ public class VendasService {
         Vendas vendas = vendasRepository.findById(id)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Venda não encontrada!"));
         try{
-            return new VendasResponseDTO(
-                    vendas.getId(),
-                    vendas.getFormasPagamentos(),
-                    vendas.getValor_total(),
-                    vendas.getStatus(),
-                    vendas.getData_criacao(),
-                    UsuarioMapper.toDTO(vendas.getUsuarioCriacao())
-            );
+            return VendasMapper.toDTO(vendas);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
 
     }
 
+    @Transactional
     public VendasResponseDTO updadeVenda(Long id, VendasRequestDTO body) {
         Vendas vendas = vendasRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Venda não encontrada!"));

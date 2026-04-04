@@ -4,8 +4,10 @@ import com.devlapa.o_pai_o.domain.contas.ContaPagar;
 import com.devlapa.o_pai_o.domain.contas.DadosCadastroContaPagar;
 import com.devlapa.o_pai_o.domain.contas.StatusConta;
 import com.devlapa.o_pai_o.domain.fornecedores.Fornecedores;
+import com.devlapa.o_pai_o.domain.usuarios.Usuarios;
 import com.devlapa.o_pai_o.repositories.ContasPagarRepository;
 import com.devlapa.o_pai_o.repositories.FornecedoresRepository;
+import com.devlapa.o_pai_o.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,22 +26,22 @@ public class ContasPagarService {
     @Autowired
     private FornecedoresRepository fornecedorRepository;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     public List<ContaPagar> listarTodas() {
         return repository.findAll();
     }
 
     @Transactional
     public ContaPagar salvar(DadosCadastroContaPagar dados) {
-        if (dados.fornecedorId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "fornecedorId e obrigatorio");
-        }
-
         var conta = new ContaPagar();
         conta.setDescricao(dados.descricao());
         conta.setValor(dados.valor());
         conta.setDataVencimento(dados.dataVencimento());
         conta.setCategoria(dados.categoria());
         conta.setFornecedor(buscarFornecedor(dados.fornecedorId()));
+        conta.setUserCriacao(buscarUsuario(dados.usuarioId()));
         conta.setStatus(StatusConta.PENDENTE);
 
         return repository.save(conta);
@@ -48,15 +50,12 @@ public class ContasPagarService {
     @Transactional
     public ContaPagar atualizar(Long id, DadosCadastroContaPagar dados) {
         var conta = buscarConta(id);
-
         conta.setDescricao(dados.descricao());
         conta.setValor(dados.valor());
         conta.setDataVencimento(dados.dataVencimento());
         conta.setCategoria(dados.categoria());
-
-        if (dados.fornecedorId() != null) {
-            conta.setFornecedor(buscarFornecedor(dados.fornecedorId()));
-        }
+        conta.setFornecedor(buscarFornecedor(dados.fornecedorId()));
+        conta.setUserCriacao(buscarUsuario(dados.usuarioId()));
 
         return repository.save(conta);
     }
@@ -64,7 +63,13 @@ public class ContasPagarService {
     @Transactional
     public void marcarComoPaga(Long id) {
         var conta = buscarConta(id);
-        conta.setStatus(StatusConta.PAGA);
+        if (conta.getStatus() == StatusConta.RECEBIDO) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Conta ja esta paga");
+        }
+        if (conta.getStatus() == StatusConta.CANCELADA) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Conta cancelada nao pode ser paga");
+        }
+        conta.setStatus(StatusConta.RECEBIDO);
         conta.setDataPagamento(LocalDate.now());
         repository.save(conta);
     }
@@ -82,5 +87,10 @@ public class ContasPagarService {
     private Fornecedores buscarFornecedor(Long fornecedorId) {
         return fornecedorRepository.findById(fornecedorId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Fornecedor nao encontrado"));
+    }
+
+    private Usuarios buscarUsuario(Long usuarioId) {
+        return usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario nao encontrado"));
     }
 }
