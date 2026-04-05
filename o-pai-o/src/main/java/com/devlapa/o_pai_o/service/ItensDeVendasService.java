@@ -1,7 +1,6 @@
 package com.devlapa.o_pai_o.service;
 
-import com.devlapa.o_pai_o.domain.categorias.CategoriaResponseDTO;
-import com.devlapa.o_pai_o.domain.categorias.Categorias;
+
 import com.devlapa.o_pai_o.domain.estoque.Estoque;
 import com.devlapa.o_pai_o.domain.itensVenda.ItensDeVenda;
 import com.devlapa.o_pai_o.domain.itensVenda.ItensDeVendasRequestDTO;
@@ -9,18 +8,16 @@ import com.devlapa.o_pai_o.domain.itensVenda.ItensDeVendasResponseDTO;
 import com.devlapa.o_pai_o.domain.produtos.Produtos;
 import com.devlapa.o_pai_o.domain.vendas.Vendas;
 import com.devlapa.o_pai_o.repositories.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.server.ResponseStatusException;
+import java.math.BigDecimal;
 
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class ItensDeVendasService {
@@ -37,15 +34,25 @@ public class ItensDeVendasService {
     @Autowired
     EstoqueRepository estoqueRepository;
 
+    @Transactional
     public ItensDeVendasResponseDTO postItens(ItensDeVendasRequestDTO body) {
 
+        if(body.quantidade() <= 0){
+            throw new RuntimeException("Quantidade invaida");
+        }
         Vendas venda = vendasRepository.findById(body.vendaId())
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Venda não encontrada"));
 
         Produtos produto = produtosRepository.findById(body.produtoId())
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Produto não encontrado"));
+        if(produto.getAtivo() != true){
+            throw new RuntimeException("Produto inativo");
+        }
         Estoque estoque = estoqueRepository.findByProdutoId(body.produtoId())
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Estoque não encontrado"));
+        if(estoque.getQuantidade().compareTo(body.quantidade()) < 0){
+            throw new RuntimeException("Quantidade insuficiente");
+        }
         int quantidadeEstoque = estoque.getQuantidade();
         if(quantidadeEstoque == 0 | estoque.getQuantidade() < body.quantidade()){
             throw new ResponseStatusException(HttpStatus.CONFLICT,"Estoque abaixo do necessário.");
@@ -55,6 +62,13 @@ public class ItensDeVendasService {
         itensDeVenda.setVenda(venda);
         itensDeVenda.setQuantidade(body.quantidade());
         itensDeVenda.setPrecoUnitario(produto.getPreco());
+        itensDeVenda.calcularPrecoTotal();
+        venda.setValor_total(
+                (venda.getValor_total() != null ? venda.getValor_total() : BigDecimal.ZERO)
+                        .add(itensDeVenda.getPrecoTotal())
+        );
+        vendasRepository.save(venda);
+
         itensDeVendasRepository.save(itensDeVenda);
         return new ItensDeVendasResponseDTO(
                 itensDeVenda.getId(),

@@ -28,7 +28,7 @@ public class Vendas {
     private FormasPagamentos formasPagamentos;
 
     @Column(nullable = false)
-    private BigDecimal valor_total;
+    private BigDecimal valor_total = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
     private StatusVenda status = StatusVenda.ABERTA;
@@ -44,11 +44,6 @@ public class Vendas {
         this.data_criacao = LocalDateTime.now();
     }
 
-    public void iniciarPreco(){
-        if(valor_total==null){
-            valor_total = BigDecimal.ZERO;
-        }
-    }
 
     @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore

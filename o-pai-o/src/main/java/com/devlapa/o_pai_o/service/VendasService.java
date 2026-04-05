@@ -1,12 +1,16 @@
 package com.devlapa.o_pai_o.service;
 
+import com.devlapa.o_pai_o.domain.estoque.Estoque;
 import com.devlapa.o_pai_o.domain.formasPagamentos.FormasPagamentos;
+import com.devlapa.o_pai_o.domain.itensVenda.ItensDeVenda;
 import com.devlapa.o_pai_o.domain.usuarios.Usuarios;
+import com.devlapa.o_pai_o.domain.vendas.StatusVenda;
 import com.devlapa.o_pai_o.domain.vendas.Vendas;
 import com.devlapa.o_pai_o.domain.vendas.VendasRequestDTO;
 import com.devlapa.o_pai_o.domain.vendas.VendasResponseDTO;
 import com.devlapa.o_pai_o.mapper.UsuarioMapper;
 import com.devlapa.o_pai_o.mapper.VendasMapper;
+import com.devlapa.o_pai_o.repositories.EstoqueRepository;
 import com.devlapa.o_pai_o.repositories.FormasPagamentosRopository;
 import com.devlapa.o_pai_o.repositories.VendasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VendasService {
@@ -26,6 +32,9 @@ public class VendasService {
     VendasRepository vendasRepository;
     @Autowired
     FormasPagamentosRopository formasPagamentosRopository;
+
+    @Autowired
+    EstoqueRepository estoqueRepository;
 
     @Transactional
     public VendasResponseDTO createVenda(VendasRequestDTO body, Usuarios usuarios) {
@@ -41,8 +50,7 @@ public class VendasService {
         usuarios1.setAtivo(usuarios.getAtivo());
         usuarios1.setDataCadastro(usuarios.getDataCadastro());
         newVenda.setFormasPagamentos(formasPagamentos);
-        newVenda.setStatus(body.statusVenda());
-        newVenda.iniciarPreco();
+        newVenda.setStatus(StatusVenda.ABERTA);
         newVenda.setUsuarioCriacao(usuarios1);
         newVenda.PrePersist();
 
@@ -63,18 +71,15 @@ public class VendasService {
     public List<VendasResponseDTO> getVendas(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Vendas> vendasPage =this.vendasRepository.findAll(pageable);
-        return vendasPage.map(event ->{
-
-            return new VendasResponseDTO(
-                    event.getId(),
-                    event.getFormasPagamentos(),
-                    event.getItens(),
-                    event.getValor_total(),
-                    event.getStatus(),
-                    event.getData_criacao(),
-                    UsuarioMapper.toDTO(event.getUsuarioCriacao())
-            );
-        }).toList();
+        return vendasPage.map(event -> new VendasResponseDTO(
+                event.getId(),
+                event.getFormasPagamentos(),
+                event.getItens(),
+                event.getValor_total(),
+                event.getStatus(),
+                event.getData_criacao(),
+                UsuarioMapper.toDTO(event.getUsuarioCriacao())
+        )).toList();
 
     }
 
@@ -90,9 +95,12 @@ public class VendasService {
     }
 
     @Transactional
-    public VendasResponseDTO updadeVenda(Long id, VendasRequestDTO body) {
+    public VendasResponseDTO finalizarVenda(Long id, VendasRequestDTO body) {
         Vendas vendas = vendasRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Venda não encontrada!"));
+        if(vendas.getItens().isEmpty()){
+            throw new RuntimeException("Venda não contém itens");
+        }
         if(body.formasPagamentosId() != null){
             FormasPagamentos form = formasPagamentosRopository.findById(body.formasPagamentosId())
                     .orElseThrow(() -> new RuntimeException("Forma de pagamento não encontrada"));
@@ -104,7 +112,44 @@ public class VendasService {
         if(body.statusVenda() != null){
             vendas.setStatus(body.statusVenda());
         }
+        for (ItensDeVenda itens : vendas.getItens()) {
+            Estoque estoque = estoqueRepository
+                    .findByProdutoId(itens.getProduto().getId())
+                    .orElseThrow(() -> new RuntimeException(
+                            "Estoque não encontrado para o produto: " + itens.getProduto().getNome()
+                    ));
+
+            if (estoque.getQuantidade().compareTo(itens.getQuantidade()) < 0) {
+                throw new RuntimeException(
+                        "Estoque insuficiente para " + itens.getProduto().getNome()
+                );
+            }
+
+            estoque.setQuantidade(
+                    estoque.getQuantidade() - itens.getQuantidade()
+            );
+
+            estoque.setDataModificacao(LocalDateTime.now());
+        }
+        vendas.setStatus(StatusVenda.PAGA);
         vendasRepository.save(vendas);
         return VendasMapper.toDTO(vendas);
+    }
+
+    public void cancelarVendas(Long id) {
+        Vendas vendas = vendasRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Venda não encontrada!"));
+        if(vendas.getStatus() == StatusVenda.PAGA){
+            for(ItensDeVenda itens : vendas.getItens()){
+                Estoque estoque = estoqueRepository.findByProdutoId(itens.getProduto().getId())
+                        .orElseThrow(() -> new RuntimeException(""));
+                estoque.setQuantidade(
+                        estoque.getQuantidade() + itens.getQuantidade()
+                );
+                estoqueRepository.save(estoque);
+            }
+        }
+        vendas.setStatus(StatusVenda.CANCELADA);
+        vendasRepository.save(vendas);
     }
 }
