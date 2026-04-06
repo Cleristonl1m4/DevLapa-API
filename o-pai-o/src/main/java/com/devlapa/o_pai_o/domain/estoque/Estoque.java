@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 @Builder
 public class Estoque {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -42,9 +43,26 @@ public class Estoque {
         this.dataModificacao = LocalDateTime.now();
     }
 
-    public void verificarStatus(){
-        if (this.quantidade <= 0) this.status = StatusEstoque.ESGOTADO;
-        else if (this.quantidade <= this.minimo) this.status = StatusEstoque.BAIXO;
-        else this.status = StatusEstoque.NORMAL;
+    public void baixarEstoque(Integer qtdVendida) {
+        if (this.quantidade == null) {
+            this.quantidade = 0;
+        }
+
+        if (this.quantidade < qtdVendida) {
+            throw new RuntimeException("Estoque  insuficiente! Atual: " + this.quantidade + "Solicitada: " + qtdVendida);
+        }
+        this.quantidade -= qtdVendida;
+
+        verificarStatus();
+    }
+
+    public void verificarStatus() {
+        if (this.quantidade == null || this.quantidade <= 0) {
+            this.status = StatusEstoque.ESGOTADO;
+        } else if (this.minimo != null && this.quantidade <= this.minimo) {
+            this.status = StatusEstoque.BAIXO;
+        } else {
+            this.status = StatusEstoque.NORMAL;
+        }
     }
 }

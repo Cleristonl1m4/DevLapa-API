@@ -3,7 +3,6 @@ package com.devlapa.o_pai_o.domain.produtos;
 import com.devlapa.o_pai_o.domain.categorias.Categorias;
 import com.devlapa.o_pai_o.domain.fornecedores.Fornecedores;
 import com.devlapa.o_pai_o.domain.itensVenda.ItensDeVenda;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
