@@ -43,7 +43,6 @@ public class ProdutoService {
                 .orElseThrow(() -> new RuntimeException ("Fornecedor não encontrado"));
 
         Produtos newProdutos = new Produtos();
-        newProdutos.setId(geradordeIdServices.geradorDeId(produtosRepository));
         newProdutos.setNome(body.nome());
         newProdutos.setPreco(body.preco());
         newProdutos.setUnidade(body.unidade());

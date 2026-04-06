@@ -35,14 +35,13 @@ public class ItensDeVenda {
     private int quantidade;
 
     @Column(nullable = false, name = "preco_unitario")
-    private BigDecimal precoUnitario;
+    private BigDecimal precoUnitario = BigDecimal.ZERO;
 
     @Column(nullable = false,name = "sub_total")
-    private BigDecimal precoTotal;
+    private BigDecimal precoTotal = BigDecimal.ZERO;
 
-    @PrePersist
     @PreUpdate
-    private void calcularPrecoTotal(){
+    public void calcularPrecoTotal(){
         if(precoUnitario != null && quantidade > 0){
             this.precoTotal = precoUnitario.multiply(BigDecimal.valueOf(quantidade));
         }

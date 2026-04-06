@@ -42,11 +42,22 @@ public class VendasController {
         return ResponseEntity.ok(vendasService.getVendaById(id));
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/finalizar")
     @PreAuthorize("hasAnyRole('ADMIN','GERENTE','USUARIO')")
-    public ResponseEntity<VendasResponseDTO> updateVendas(@PathVariable Long id, @RequestBody VendasRequestDTO body){
+    public ResponseEntity<VendasResponseDTO> finalizarVendas(@PathVariable Long id, @RequestBody VendasRequestDTO body){
         try{
-            return ResponseEntity.ok(vendasService.updadeVenda(id,body));
+            return ResponseEntity.ok(vendasService.finalizarVenda(id,body));
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PatchMapping("/{id}/cancelar")
+    @PreAuthorize("hasAnyRole('ADMIN','GERENTE','USUARIO')")
+    public ResponseEntity<String> cancelarVendas(@PathVariable Long id){
+        try{
+            vendasService.cancelarVendas(id);
+            return ResponseEntity.ok("Cancelamento realizado com sucesso!");
         }catch (Exception e){
             throw new RuntimeException(e);
         }
