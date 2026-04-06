@@ -1,16 +1,22 @@
 package com.devlapa.o_pai_o.domain.usuarios;
 
+import com.devlapa.o_pai_o.domain.vendas.Vendas;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "usuarios")
 @Getter
 @Setter
-public class Usuarios {
+public class Usuarios implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,67 +52,61 @@ public class Usuarios {
     }
 
 
-    public Long getId() {
-        return id;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        String p = (this.perfil != null) ? this.perfil.trim().toUpperCase() : "USUARIO";
+
+        if (p.equals("ADMIN")) {
+            return List.of(
+                    new SimpleGrantedAuthority("ROLE_ADMIN"),
+                    new SimpleGrantedAuthority("ROLE_GERENTE"),
+                    new SimpleGrantedAuthority("ROLE_USUARIO")
+            );
+        }
+
+        if (p.equals("GERENTE")) {
+            return List.of(
+                    new SimpleGrantedAuthority("ROLE_GERENTE"),
+                    new SimpleGrantedAuthority("ROLE_USUARIO")
+            );
+        }
+
+
+        return List.of(new SimpleGrantedAuthority("ROLE_USUARIO"));
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getHash() {
+    @Override
+    public String getPassword() {
         return hash;
     }
 
-    public void setHash(String hash) {
-        this.hash = hash;
+    @Override
+    public String getUsername() {
+        return login;
     }
 
-    public LocalDateTime getDataCadastro() {
-        return dataCadastro;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public void setDataCadastro(LocalDateTime dataCadastro) {
-        this.dataCadastro = dataCadastro;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
     }
 
-    public String getPerfil() {
-        return perfil;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
-    public void setPerfil(String perfil) {
-        this.perfil = perfil;
+    @Override
+    public boolean isEnabled() {
+        return ativo != null ? ativo : true;
     }
 
-    public LocalDateTime getDataModificacao() {
-        return dataModificacao;
-    }
-
-    public void setDataModificacao(LocalDateTime dataModificacao) {
-        this.dataModificacao = dataModificacao;
-    }
-
-    public Boolean getAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        this.ativo = ativo;
-    }
+    @JsonIgnore
+    @OneToMany(mappedBy = "usuarioCriacao",cascade = CascadeType.ALL)
+    private List<Vendas> vends;
 }
