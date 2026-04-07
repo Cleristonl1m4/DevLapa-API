@@ -1,23 +1,27 @@
 package com.devlapa.o_pai_o.domain.categorias;
 
+import com.devlapa.o_pai_o.domain.produtos.Produtos;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "categoria")
+@Table(name = "categorias")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Categorias {
     @Id
-    @GeneratedValue
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nome;
 
     @Column(nullable = false)
@@ -30,4 +34,7 @@ public class Categorias {
         data_criacao = LocalDateTime.now();
     }
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "categoria")
+    private List<Produtos> produtos;
 }

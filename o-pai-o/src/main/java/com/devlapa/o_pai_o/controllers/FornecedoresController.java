@@ -5,12 +5,11 @@ import com.devlapa.o_pai_o.domain.fornecedores.FornecedoresRequestDTO;
 import com.devlapa.o_pai_o.domain.fornecedores.FornecedoresResponseDTO;
 import com.devlapa.o_pai_o.service.FornecedoresServices;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/fornecedor")
@@ -30,7 +29,15 @@ public class FornecedoresController {
         List<FornecedoresResponseDTO> allFornecedores = this.fornecedoresServices.getFornecedores(page,size);
         return ResponseEntity.ok(allFornecedores);
     }
-
+    @PatchMapping("/{id}")
+    public Fornecedores updateFornecedor(@PathVariable Long id,@RequestBody Map<String,Object>fields){
+        return fornecedoresServices.updateFornecedoresFields(id,fields);
+    }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteFornecedor(@PathVariable Long id){
+        fornecedoresServices.deleteFornecedor(id);
+        return ResponseEntity.ok("Usuario deletado com sucesso");
+    }
 
 
 }
