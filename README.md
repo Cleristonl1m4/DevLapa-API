@@ -4,22 +4,26 @@
 
 | Nome | GitLab |
 |------|--------|
-| | @usuario |
-| | @usuario |
-| | @usuario |
-| | @usuario |
+| Allyson Ramos | @Allyson |
+| Amanda Rezende | @Amanda |
+| Clériston Lima | @Cleriston |
+| Débora Neves | @Debora |
 
 ## 🎯 Problema Escolhido
 
-> Descreva aqui o problema real que o MVP vai resolver.
+> O projeto consiste no desenvolvimento de um sistema web para gerenciamento operacional 
+> e financeiro desenvolvido para bares, restaurantes e estabelecimentos gastronômicos de 
+> pequeno e medio porte. O sistema centraliza o controle de produtos, estoque, comandas,
+> vendas, fornecedores e movimentações financeiras em uma única plataforma digital, 
+> eliminando processos manuais e planilhas desconexas que resultam em erros e perda de informações..
 
 ## 🛠️ Stack Utilizada
 
 | Camada | Tecnologia |
 |--------|-----------|
-| Frontend | |
-| Backend | |
-| Banco de Dados | |
+| Frontend | React e Twind |
+| Backend | Java 24 |
+| Banco de Dados | PostgreSQL 18.1 |
 | Hospedagem | |
 
 ## 🚀 Guia de Setup e Execução
@@ -27,25 +31,37 @@
 ### Pré-requisitos
 
 ```bash
-# Liste aqui as dependências (ex: Node.js 20+, Python 3.12+, Docker, etc.)
+ * Java JDK 24 (ambiente de execucao).
+ * Maven 3.9+ (gerenciador de dependências).
+ * PostgreSQL 18 (banco de dados local).
+ * Postman (ferramenta oficial de testes da API).
+Instalação
 ```
 
 ### Instalação
 
 ```bash
-# Clone o repositório
-git clone <url-do-repo>
-cd <nome-do-repo>
+git clone <https://gitlab.horizonte.tech/projetos-integrados-2/devlapa/devlapa.git>
+cd <DevLapa>
 
-# Instale as dependências
-# npm install / pip install -r requirements.txt / etc.
+# Entre na pasta do projeto
+cd devlapa-api
+
+# Instale as dependências e gere o build
+mvn clean install 
 ```
 
 ### Executar localmente
 
 ```bash
-# Comando para subir o projeto
-# npm run dev / python manage.py runserver / docker compose up / etc.
+ * Subir o Projeto: No IntelliJ ou terminal, execute:
+   mvn spring-boot:run
+
+ * Importar Coleção: No Postman, use a opção Import e selecione o arquivo JSON da nossa collection (ou aponte para http://localhost:8080/v3/api-docs para gerar automaticamente).
+ * Autenticação:
+   * Execute o endpoint POST /auth/login.
+   * Copie o Token JWT gerado.
+   * No Postman, vá na aba Authorization, selecione Bearer Token e cole o código.
 ```
 
 ### Acessar
@@ -57,11 +73,11 @@ cd <nome-do-repo>
 
 | CP | Data | Entrega | Status |
 |----|------|---------|--------|
-| CP-1 | 12/03 | Banco de Dados (SQL + ER) | |
-| CP-2 | 26/03 | Backend (API CRUD) | |
-| CP-3 | 16/04 | Integração (Frontend + API) | |
-| CP-4 | 07/05 | MVP end-to-end | |
-| CP-5 | 21/05 | Hospedagem + README final | |
+| CP-1 | 12/03 | Banco de Dados (SQL + ER) | OK     |
+| CP-2 | 26/03 | Backend (API CRUD) | OK     |
+| CP-3 | 16/04 | Integração (Frontend + API) |        |
+| CP-4 | 07/05 | MVP end-to-end |        |
+| CP-5 | 21/05 | Hospedagem + README final |        |
 
 ## 📝 Licença
 
