@@ -27,6 +27,7 @@ Controle de comandas
 
 ## Tarefas atribuídas
 | Tarefa | Responsável | Prazo |
+|--------|-------------|-------|
 | Prototipo Figma | Amanda | 12/03 |
 | Modelagem do BD | Clériston | 12/03 |
 | Organização do Trello e sprints | Allyson | 12/03 |
@@ -35,4 +36,36 @@ Controle de comandas
 
 # Ata — 26/03/2026
 
-**Presentes:** Allyson,Amanda,Clériston, Débora 
+*Presentes:* Allyson,Amanda,Clériston, Débora
+*Duração:* 21:50— 22:15
+
+## Pauta
+- Apresentação da arquitetura do Sistema
+- Definição das camadas de aplicação
+- Apresentação dos endpoints da API REST
+- Apresentação dos testes manuais(MVP)
+- Organização das tarefas da equipe
+
+## Decisões
+- Definida a arquitetura do sistema baseada em camadas utilizando:
+  Controller: responsáveis pelas requisições HTTP e retorno em JSON
+  Service: responsável pela regra de negócios
+  Repository: responsável pelo acesso ao banco de dados
+  Database: PostgreSQL com uso de migrations flyway
+- Definidos os principais endpoints da API
+  POST/api/login
+  POST/api/produtos
+  POST/api/contas-pagar
+  GET/api/produtos
+  GET/api/estoque
+- Definidos os primeiros testes do sistema
+- Atualização da organização do Trello e sprints
+
+## Tarefas atribuídas
+| Tarefa | Responsável | Prazo   |
+|--------|-------------|---------|
+|Diagrama de Classes UML|Cleriston| 26/03   |
+|Endpoints|Allyson| 26/03   |
+|Organização do Trello e sprints|Amanda| 26/03   |
+|Arquitetura do Sistema|Debora| 26/03   |
+|API- rest | Débora | 26/03   |
