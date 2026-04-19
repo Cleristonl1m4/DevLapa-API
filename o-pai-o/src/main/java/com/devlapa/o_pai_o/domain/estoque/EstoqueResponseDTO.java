@@ -1,10 +1,12 @@
 package com.devlapa.o_pai_o.domain.estoque;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record EstoqueResponseDTO(
         Long id,
         String nomeProduto,
+        BigDecimal preco,
         Integer quantidade,
         Integer minimo,
         StatusEstoque status,
@@ -15,6 +17,7 @@ public record EstoqueResponseDTO(
         this(
                 estoque.getId(),
                 estoque.getProduto().getNome(),
+                estoque.getProduto().getPreco(),
                 estoque.getQuantidade(),
                 estoque.getMinimo(),
                 estoque.getStatus(),
